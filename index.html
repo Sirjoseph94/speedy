@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <title>Speedy - Internet speed test</title>
+	
+	<script type="text/javascript" src="speedtest.js"></script>
+	 <style>
+       /* Set the size of the div element that contains the map */
+      #map {
+        height: 400px;  /* The height is 400 pixels */
+        width: 100%;  /* The width is the width of the web page */
+       }
+    </style>
+</head>
+
+<body>
+<section class="hero is-primary is-bold">
+  <div class="hero-body">
+    <div class="container  has-text-centered">
+      <h1 class="title">
+        Speedy - Internet speed test
+      </h1>
+      <h2 class="subtitle">
+        Test your internet speed and map the location of your IP Address
+      </h2>
+    </div>
+  </div>
+</section>
+
+	<section class="section">
+		<div class="container tile is-ancestor">
+
+			<div class=" tile is-parent level">
+			
+				<div class=" tile is-child box level-item has-text-centered">
+					
+					<h4 class="title"><span class="icon has-text-info is-large">
+						<i class="fas fa-map-marker-alt "></i>
+					</span> IP Address</h4>
+					<p id="ip"></p>
+				</div>
+
+				<div class=" tile is-child box level-item has-text-centered">
+					<h4 class="title">
+					<span class="icon has-text-success is-large">
+						<i class="fas fa-arrow-down "></i>
+					</span> Download</h4>
+					<p id="download"></p>
+				</div>
+		
+				<div class=" tile is-child box level-item has-text-centered">
+					<h4 class="title">
+					<span class="icon has-text-warning is-large">
+						<i class="fas fa-arrow-up "></i>
+					</span> Upload</h4>
+					<p id="upload"></p>
+				</div>
+
+				<div class=" tile is-child box level-item has-text-centered">
+					<h4 class="title">
+					<span class="icon has-text-danger is-large">
+						<i class="fas fa-wave-square"></i>
+					</span> Latency</h4>
+					<p id="ping"></p>
+				</div>
+				
+			</div>
+		</div>
+		</div>
+	</section>
+	<section class="section">
+		<!-- map -->
+		<h4 class="title">ISP Location</h4>
+		 <div id="map"></div>
+	</section>
+	
+	<footer class="footer">
+  <div class="content has-text-centered">
+    <p> Copyright 2019 - Speedy.
+    </p>
+  </div>
+</footer>
+
+    <script type="text/javascript">
+        var s=new Speedtest();
+		
+        s.onupdate = function (data) { // when status is received, put the values in the appropriate fields
+            document.getElementById('download').textContent = data.dlStatus + ' Mbit/s'
+            document.getElementById('upload').textContent = data.ulStatus + ' Mbit/s'
+            document.getElementById('ping').textContent = data.pingStatus + ' ms, ' + data.jitterStatus + ' ms jitter'
+            document.getElementById('ip').textContent = data.clientIp
+        }
+		
+        s.start(); // start the speedtest with default settings
+		
+// Initialize and add the map
+function initMap() {
+var lat
+var lon
+var city
+var isp
+
+function location (lat, lon){
+
+	fetch('http://ip-api.com/json')
+		.then((resp) => resp.json())
+			.then (function(data){
+				 city = data.city
+				 lat = data.lat
+				 lon = data.lon
+				 isp = data.isp
+				 })
+			console.log(lat, lon)
+				 }
+  // The location of loc
+  var loc = {lat: 6.46046, lng: 3.7445};
+  // The map, centered at loc
+  var map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 8, center: loc});
+  // The marker, positioned at loc
+  var marker = new google.maps.Marker({position: loc, map: map});
+}
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Ur7qjuko-Wn38AeSMbdpAgygx_X7D1o&callback=initMap">
+    </script>
+</body>
+</html>
