@@ -75,7 +75,7 @@
 	</section>
 	<section class="section">
 		<!-- map -->
-		<h4 class="title">ISP Location</h4>
+		<h4 class="title">Your Location</h4>
 		 <div id="map"></div>
 	</section>
 	
@@ -86,8 +86,9 @@
   </div>
 </footer>
 
-    <script type="text/javascript">
-        var s=new Speedtest();
+
+   <script type="text/javascript">
+        var s = new Speedtest();
 		
         s.onupdate = function (data) { // when status is received, put the values in the appropriate fields
             document.getElementById('download').textContent = data.dlStatus + ' Mbit/s'
@@ -97,37 +98,47 @@
         }
 		
         s.start(); // start the speedtest with default settings
+    </script>
+	
+	<script>
+	// Initialize and add the map
+	var map;
+	var infoWindow;
+	
+	function createMap() {
+		var options = {
+		 center: {lat: 6.90, lng: 5.78}, //default location
+		 zoom: 10
+		};
 		
-// Initialize and add the map
-function initMap() {
-var lat
-var lon
-var city
-var isp
+		//infoWindow = new google.maps.infoWindow;
+	map = new google.maps.Map(document.getElementById("map"), options);
+	
+	
+	
+	if(navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(function (p) {
+		var position = {
+			lat: p.cords.latitude,
+			lng: p.cords.longitude
+	};
 
-function location (lat, lon){
-
-	fetch('http://ip-api.com/json')
-		.then((resp) => resp.json())
-			.then (function(data){
-				 city = data.city
-				 lat = data.lat
-				 lon = data.lon
-				 isp = data.isp
-				 })
-			console.log(lat, lon)
-				 }
-  // The location of loc
-  var loc = {lat: 6.46046, lng: 3.7445};
-  // The map, centered at loc
-  var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 8, center: loc});
-  // The marker, positioned at loc
-  var marker = new google.maps.Marker({position: loc, map: map});
-}
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Ur7qjuko-Wn38AeSMbdpAgygx_X7D1o&callback=initMap">
-    </script>
+	
+	var marker = new google.maps.Marker({
+          position: position,
+          map: map,
+          title: 'Uluru (Ayers Rock)'
+        });
+	
+	}, function (){
+	handlelocationError('Geolocation service failed', map.center());
+	})
+	} else {
+		handlelocationError('no geolocation available', map.center());
+		}
+		}
+	</script>
+   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Ur7qjuko-Wn38AeSMbdpAgygx_X7D1o&callback=createMap"></script>
+  
 </body>
 </html>
